@@ -1,0 +1,16 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+#include <nxp/nxp_lpc176x.dtsi>
+#include <mem.h>
+
+/ {
+        &sram {
+                reg = <0x10000000 DT_SIZE_K(32)>;
+        };
+
+        soc {
+                &flash {
+                        reg = <0 DT_SIZE_K(256)>;
+                };
+        };
+};

@@ -1,0 +1,9 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+#include <nxp/nxp_lpc1765.dtsi>
+
+/ {
+        soc {
+                /delete-node/ &usb;
+        };
+};

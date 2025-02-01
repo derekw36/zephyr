@@ -26,6 +26,15 @@ family:
       cpuclusters:
       - name: cpu0
       - name: cpu1
+  - name: lpc176x
+    socs:
+    - name: lpc1763
+    - name: lpc1764
+    - name: lpc1765
+    - name: lpc1766
+    - name: lpc1767
+    - name: lpc1768
+    - name: lpc1769
 runners:
   run_once:
     '--erase':
