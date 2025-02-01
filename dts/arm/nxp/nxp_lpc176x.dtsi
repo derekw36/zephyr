@@ -1,0 +1,251 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+#include <arm/armv7-m.dtsi>
+#include <mem.h>
+
+/ {
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu0: cpu@0 {
+			compatible = "arm,cortex-m3";
+			reg = <0>;
+		};
+	};
+
+	sram: memory@10000000 {
+		compatible = "mmio-sram";
+	};
+
+	sram0: memory@2007c000 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2007c000 DT_SIZE_K(16)>;
+		zephyr,memory-region = "SRAM0";
+	};
+
+	sram1: memory@20080000 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x20080000 DT_SIZE_K(16)>;
+		zephyr,memory-region = "SRAM1";
+	};
+
+	soc {
+		flash: flash@0 {
+			compatible = "soc-nv-flash";
+		};
+
+		gpio: gpio@2009c000 {
+			compatible = "nxp,lpc-gpio";
+			reg = <0x2009c000 0x4000>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			// only P0 and P2 can generate an interrupt
+			gpio0: gpio@0 {
+				compatible = "nxp,lpc-gpio-port";
+				reg = <0>;
+				int-source = "pint";
+				gpio-controller;
+				#gpio-cells = <2>;
+			};
+
+			gpio1: gpio@1 {
+				compatible = "nxp,lpc-gpio-port";
+				reg = <1>;
+				gpio-controller;
+				#gpio-cells = <2>;
+			};
+
+			gpio2: gpio@2 {
+				compatible = "nxp,lpc-gpio-port";
+				reg = <2>;
+				int-source = "pint";
+				gpio-controller;
+				#gpio-cells = <2>;
+			};
+
+			gpio3: gpio@3 {
+				compatible = "nxp,lpc-gpio-port";
+				reg = <3>;
+				gpio-controller;
+				#gpio-cells = <2>;
+			};
+
+			gpio4: gpio@4 {
+				compatible = "nxp,lpc-gpio-port";
+				reg = <4>;
+				gpio-controller;
+				#gpio-cells = <2>;
+			};
+		};
+
+		wdt: wdt@40000000 {
+			compatible = "nxp,lpc-wwdt";
+			reg = <0x40000000 0x4000>;
+		};
+
+		timer0: timer@40004000 {
+			compatible = "nxp,lpc-ctimer";
+			reg = <0x40004000 0x4000>;
+		};
+
+		timer1: timer@40008000 {
+			compatible = "nxp,lpc-ctimer";
+			reg = <0x40008000 0x4000>;
+		};
+
+		uart0: uart@4000c000 {
+			compatible = "nxp,lpc-usart";
+			reg = <0x4000c000 0x4000>;
+		};
+
+		uart1: uart@40010000 {
+			compatible = "nxp,lpc-usart";
+			reg = <0x40010000 0x4000>;
+		};
+
+		pwm1: pwm@40018000 {
+			//compatible?;
+			reg = <0x40018000 0x4000>;
+		};
+
+		i2c0: i2c@4001c000 {
+			//compatible?;
+			reg = <0x4001c000 0x4000>;
+		};
+
+		spi: spi@40020000 {
+			//compatible?;
+			reg = <0x40020000 0x4000>;
+		};
+
+		rtc: rtc@40024000 {
+			//compatible?;
+			reg = <0x40024000 0x4000>;
+		};
+
+		pint: pint@40028000 {
+			compatible = "nxp,pint";
+			reg = <0x40028000 0x4000>;
+			interrupt-controller;
+			#interrupt-cells = <1>;
+			#address-cells = <0>;
+
+			// TODO populate interrupts with 42 pins
+			interrupts = <4 2>, <5 2>, <6 2>, <7 2>,
+				<32 2>, <33 2>, <34 2>, <35 2>;
+			num-lines = <8>;
+			num-inputs = <64>;
+		};
+
+		// TODO: is this right?
+		iocon: iocon@4002c000 {
+			compatible = "nxp,lpc-iocon";
+			reg = <0x4002c000 0x4000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x4002c000 0x4000>;
+			pinctrl: pinctrl {
+				compatible = "nxp,lpc-iocon-pinctrl";
+			};
+		};
+
+		ssp1: ssp@40030000 {
+			//compatible?;
+			reg = <0x40030000 0x4000>;
+		};
+
+		adc: adc@40034000 {
+			//compatible?;
+			reg = <0x40034000 0x4000>;
+		};
+
+		/* CAN peripheral 0x4003800 thru 0x4004c000 */
+
+		i2c1: i2c@4005c000 {
+			//compatible?;
+			reg = <0x4005c000 0x4000>;
+		};
+
+		ssp0: ssp@40088000 {
+			//compatible?;
+			reg = <0x40088000 0x4000>;
+		};
+
+		dac: dac@4008c000 {
+			//compatible?;
+			reg = <0x4008c000 0x4000>;
+		};
+
+		timer2: timer@40090000 {
+			compatible = "nxp,lpc-ctimer";
+			reg = <0x40090000 0x4000>;
+		};
+
+		timer3: timer@40094000 {
+			compatible = "nxp,lpc-ctimer";
+			reg = <0x40094000 0x4000>;
+		};
+
+		uart2: uart@40098000 {
+			compatible = "nxp,lpc-usart";
+			reg = <0x40098000 0x4000>;
+		};
+
+		uart3: uart@4009c000 {
+			compatible = "nxp,lpc-usart";
+			reg = <0x4009c000 0x4000>;
+		};
+
+		i2c2: i2c@400a0000 {
+			//compatible?;
+			reg = <0x400a0000 0x4000>;
+		};
+
+		i2s: i2s@400a8000 {
+			//compatible?;
+			reg = <0x400a8000 0x4000>;
+		};
+
+		pit: pit@400b0000 {
+			compatible = "nxp,pit";
+			reg = <0x400b0000 0x4000>;
+		};
+
+		mcpwm: mcpwm@400b8000 {
+			//compatible?;
+			reg = <0x400b8000 0x4000>;
+		};
+
+		qei: qei@400bc000 {
+			compatible = "nxp,mcux-qdec";
+			reg = <0x400bc000 0x4000>;
+		};
+
+		syscon: syscon@400fc000 {
+			compatible = "nxp,lpc-syscon";
+			reg = <0x400fc000 0x4000>;
+			#clock-cells = <1>;
+			reset: reset {
+				compatible = "nxp,lpc-syscon-reset";
+				#reset-cells = <1>;
+			};
+		};
+
+		eth: eth@50000000 {
+			//compatible?;
+			reg = <0x50000000 0x4000>;
+		};
+
+		dma: dma@50004000 {
+			//compatible?;
+			reg = <0x50004000 0x4000>;
+		};
+
+		usb: usb@5000c000 {
+			//compatible?;
+			reg = <0x5000c000 0x4000>;
+		};
+	};
+};

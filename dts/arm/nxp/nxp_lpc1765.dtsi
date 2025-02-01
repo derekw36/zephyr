@@ -1,0 +1,10 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+
+#include <nxp/nxp_lpc1766.dtsi>
+#include <mem.h>
+
+/ {
+        soc {
+                /delete-node/ &eth;
+        };
+};
