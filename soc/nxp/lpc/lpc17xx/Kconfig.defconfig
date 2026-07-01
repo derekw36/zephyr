@@ -1,0 +1,15 @@
+if SOC_SERIES_LPC17XX
+
+DT_NVIC_PATH := $(dt_nodelabel_path,nvic)
+DT_NVIC_MAX_IRQN := $(dt_highest_controller_irq_number,$(DT_NVIC_PATH),irq)
+
+config NUM_IRQS
+	default $(inc,$(DT_NVIC_MAX_IRQN)) if $(dt_path_enabled,$(DT_NVIC_PATH))
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default 4000000 if SOC_LPC1768
+
+config FLASH_SIZE
+	default 512 if SOC_LPC1768
+
+endif # SOC_SERIES_LPC17XX

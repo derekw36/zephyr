@@ -1,0 +1,36 @@
+#include <arm/armv7-m.dtsi>
+#include <mem.h>
+#include <freq.h>
+
+// TODO: split into SoC parts
+
+/ {
+	chosen {
+		zephyr,sram = &sram;
+	};
+
+	cpus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		cpu0: cpu@0 {
+			compatible = "arm,cortex-m3";
+			reg = <0>;
+		};
+	};
+
+	sram: memory@10000000 {
+		compatible = "mmio-sram";
+		// All but LPC1764 has 32kB
+	};
+
+	sram0: memory@2007c000 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2007c000 DT_SIZE_K(16)>;
+		zephyr,memory-region = "SRAM0";
+	};
+};
+
+&nvic {
+	arm,num-irq-priority-bits = <5>;
+};
