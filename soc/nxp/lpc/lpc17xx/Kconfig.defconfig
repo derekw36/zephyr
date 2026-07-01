@@ -1,0 +1,13 @@
+if SOC_SERIES_LPC17XX
+
+config NUM_IRQS
+	# must be >= the highest interrupt number used
+	default 50
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default $(dt_node_int_prop_int,/cpus/cpu@0,clock-frequency)
+
+config FLASH_SIZE
+	default 512 if SOC_LPC1768
+
+endif # SOC_SERIES_LPC17XX
