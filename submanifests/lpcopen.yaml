@@ -1,0 +1,12 @@
+manifest:
+  remotes:
+    - name: derekw36
+      url-base: git@github.com:derekw36
+
+  projects:
+    - name: lpcopen
+      remote: derekw36
+      revision: zephyr
+      path: modules/hal/lpcopen
+      groups:
+        - hal
