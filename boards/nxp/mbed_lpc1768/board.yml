@@ -1,0 +1,6 @@
+board:
+  name: mbed_lpc1768
+  full_name: mbed NXP LPC1768
+  vendor: nxp
+  socs:
+    - name: lpc1768

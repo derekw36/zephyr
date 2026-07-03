@@ -1,0 +1,8 @@
+/dts-v1/;
+
+#include <nxp/lpc/nxp_lpc1768.dtsi>
+
+/ {
+	model = "mbed NXP LPC1768";
+	compatible = "nxp,mbed-lpc1768";
+};
