@@ -27,6 +27,7 @@ source "modules/Kconfig.eos_s3"
 source "modules/Kconfig.esp32"
 source "modules/Kconfig.infineon"
 source "modules/Kconfig.libmetal"
+source "modules/Kconfig.lpcopen"
 source "modules/lvgl/Kconfig"
 source "modules/Kconfig.microchip"
 source "modules/Kconfig.mspm0"
@@ -123,6 +124,9 @@ comment "cmsis-nn module not available."
 
 comment "Dhara module not available."
 	depends on !ZEPHYR_DHARA_MODULE
+
+comment "LPCOpen module not available."
+	depends on !ZEPHYR_LPCOPEN_MODULE
 
 # This ensures that symbols are available in Kconfig for dependency checking
 # and referencing, while keeping the settings themselves unavailable when the
