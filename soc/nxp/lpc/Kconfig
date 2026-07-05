@@ -9,4 +9,7 @@ config SOC_FAMILY_LPC
 if SOC_FAMILY_LPC
 rsource "*/Kconfig"
 
+config LPC_PATCH_CHECKSUM
+	bool
+
 endif # SOC_FAMILY_LPC
