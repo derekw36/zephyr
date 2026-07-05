@@ -15,9 +15,6 @@ gitlint-core
 # helper for developers
 junit2html
 
-# Script used to build firmware images for NXP LPC MCUs.
-lpc_checksum
-
 # used by NXP platform to generate/flash firmware images
 spsdk >= 3.0.0
 
