@@ -1,0 +1,28 @@
+description: NXP LPC17xx Main PLL (PLL0)
+
+compatible: "nxp,lpc17xx-main-pll"
+
+include: [base.yaml, clock-controller.yaml]
+
+properties:
+  "#clock-cells":
+    const: 0
+
+  clocks:
+    required: true
+
+  div-n:
+    type: int
+    required: true
+    description: |
+      PLL0 Pre-divider value (NSEL0). The register value will be 1 less than this.
+    min: 1
+    max: 32
+
+  mul-m:
+    type: int
+    required: true
+    description: |
+      PLL0 Multiplier value (MSEL0). The register value will be 1 less than this.
+    min: 1
+    max: 512

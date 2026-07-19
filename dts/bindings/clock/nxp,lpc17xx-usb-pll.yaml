@@ -1,0 +1,27 @@
+description: NXP LPC17xx USB PLL (PLL1)
+
+compatible: "nxp,lpc17xx-usb-pll"
+
+include: [base.yaml, clock-controller.yaml]
+
+properties:
+  "#clock-cells":
+    const: 0
+
+  clocks:
+    required: true
+
+  div-p:
+    type: int
+    required: true
+    description: |
+      PLL1 Divider value (PSEL1). The register value will be mapped to a 2-bit ID.
+    enum: [1, 2, 4, 8]
+
+  mul-m:
+    type: int
+    required: true
+    description: |
+      PLL1 Multiplier value (MSEL1). The register value will be 1 less than this.
+    min: 1
+    max: 32
