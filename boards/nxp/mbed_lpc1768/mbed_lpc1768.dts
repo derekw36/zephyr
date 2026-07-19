@@ -6,3 +6,30 @@
 	model = "mbed NXP LPC1768";
 	compatible = "nxp,mbed-lpc1768";
 };
+
+&osc_clk {
+	/* 12 MHz external oscillator */
+	clock-frequency = <DT_FREQ_M(12)>;
+	status = "okay";
+};
+
+&main_pll {
+	clocks = <&osc_clk>;
+	div-n = <1>;
+	mul-m = <12>;
+	status = "okay";
+};
+
+&usb_pll {
+	mul-m = <4>;
+	div-p = <2>;
+	status = "okay";
+};
+
+&clkc {
+	clocks = <&main_pll>;
+	div-cpu = <3>;
+	div-usb = <6>;
+
+	clock-frequency = <DT_FREQ_M(96)>;
+};

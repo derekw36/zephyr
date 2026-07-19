@@ -29,6 +29,76 @@
 		reg = <0x2007c000 DT_SIZE_K(16)>;
 		zephyr,memory-region = "SRAM0";
 	};
+
+	clocks {
+		irc_osc: internal-oscillator {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <DT_FREQ_M(4)>;
+		};
+
+		rtc_clk: rtc-oscillator {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <32768>;
+		};
+
+		osc_clk: main-oscillator {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			/* external crystal frequency is specific to board */
+			status = "disabled";
+		};
+
+		main_pll: pll0 {
+			compatible = "nxp,lpc17xx-main-pll";
+			#clock-cells = <0>;
+
+			interrupts = <16 0>;
+			interrupt-parent = <&nvic>;
+
+			clocks = <&irc_osc>; // default
+			mul-m = <1>; // default
+			div-n = <1>; // default
+
+			status = "disabled";
+		};
+
+		usb_pll: pll1 {
+			compatible = "nxp,lpc17xx-usb-pll";
+			#clock-cells = <0>;
+
+			interrupts = <32 0>;
+			interrupt-parent = <&nvic>;
+
+			clocks = <&osc_clk>;
+			mul-m = <1>; // default
+			div-p = <1>; // default
+
+			status = "disabled";
+		};
+	};
+
+	soc {
+		syscon: syscon@400fc000 {
+			compatible = "syscon";
+			reg = <0x400fc000 0x4000>;
+
+			clkc: clock-controller {
+				compatible = "nxp,lpc17xx-clock";
+				#clock-cells = <2>;
+
+				/* Selects the CPU clock source */
+				clocks = <&irc_osc>; // default
+
+				div-cpu = <1>; // default
+				div-usb = <1>; // default
+
+				/* CCLK frequency, used by Zephyr for timing */
+				clock-frequency = <DT_FREQ_M(4)>; // default
+			};
+		};
+	};
 };
 
 &nvic {

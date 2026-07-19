@@ -7,9 +7,12 @@ config NUM_IRQS
 	default $(inc,$(DT_NVIC_MAX_IRQN)) if $(dt_path_enabled,$(DT_NVIC_PATH))
 
 config SYS_CLOCK_HW_CYCLES_PER_SEC
-	default 4000000 if SOC_LPC1768
+	default $(dt_nodelabel_int_prop,clkc,clock-frequency)
 
 config FLASH_SIZE
 	default 512 if SOC_LPC1768
+
+config SYSCON_INIT_PRIORITY
+	default 0
 
 endif # SOC_SERIES_LPC17XX

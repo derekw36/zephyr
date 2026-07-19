@@ -1,0 +1,40 @@
+description: NXP LPC17xx clock controller
+
+compatible: "nxp,lpc17xx-clock"
+
+include: [base.yaml, clock-controller.yaml]
+
+properties:
+  "#clock-cells":
+    const: 2 # peripheral bit offset, divider value
+
+  clocks:
+    required: true
+
+  clock-frequency:
+    type: int
+    required: true
+    description: |
+      Final computed frequency of CCLK, used for Zephyr build-time systick rate.
+
+  div-cpu:
+    type: int
+    required: true
+    description: |
+      CPU clock divider. The register value will be 1 less than this.
+      This produces the final CPU, bus, and peripheral clock.
+    min: 1
+    max: 256
+
+  div-usb:
+    type: int
+    required: true
+    description: |
+      USB clock divider. The register value will be 1 less than this.
+      NOTE: The output of this divider must be 48 MHz with a 50% duty cycle.
+    min: 1
+    max: 16
+
+clock-cells:
+  - periph
+  - divider
