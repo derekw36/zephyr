@@ -228,10 +228,98 @@ struct lpc17xx_clkc_config {
 	uint32_t div_usb;
 };
 
+static int lpc17xx_clkc_on(__unused const struct device *dev, clock_control_subsys_t sys)
+{
+	const struct lpc17xx_pclk *pclk = sys;
+
+	if (pclk->enable == LPC17XX_PCNONE) {
+		return -ENODEV;
+	}
+
+	Chip_Clock_EnablePeriphClock(pclk->enable);
+	return 0;
+}
+
+static int lpc17xx_clkc_off(__unused const struct device *dev, clock_control_subsys_t sys)
+{
+	const struct lpc17xx_pclk *pclk = sys;
+
+	if (pclk->enable == LPC17XX_PCNONE) {
+		return -ENODEV;
+	}
+
+	Chip_Clock_DisablePeriphClock(pclk->enable);
+	return 0;
+}
+
+static int lpc17xx_clkc_get_rate(__unused const struct device *dev, clock_control_subsys_t sys, uint32_t *rate)
+{
+	const struct lpc17xx_pclk *pclk = sys;
+
+	/* The peripheral clock for the RTC block is fixed at CCLK/8. */
+	if (pclk->enable == SYSCTL_CLOCK_RTC) {
+		*rate = Chip_Clock_GetSystemClockRate() / 8;
+	} else {
+		if (pclk->select == LPC17XX_PCLK_NONE) {
+			return -ENODEV;
+		}
+
+		*rate = Chip_Clock_GetPeripheralClockRate(pclk->select);
+	}
+
+	return 0;
+}
+
+static enum clock_control_status lpc17xx_clkc_get_status(__unused const struct device *dev,
+							 clock_control_subsys_t sys)
+{
+	const struct lpc17xx_pclk *pclk = sys;
+
+	if (pclk->enable == LPC17XX_PCNONE) {
+		return -ENODEV;
+	}
+
+	bool enabled = Chip_Clock_IsPeripheralClockEnabled(pclk->enable);
+	return enabled ? CLOCK_CONTROL_STATUS_ON : CLOCK_CONTROL_STATUS_OFF;
+}
+
+static DEVICE_API(clock_control, lpc17xx_clkc_api) = {
+	.on = lpc17xx_clkc_on,
+	.off = lpc17xx_clkc_off,
+	.get_rate = lpc17xx_clkc_get_rate,
+	.get_status = lpc17xx_clkc_get_status,
+};
+
+/* Evaluates to 1 if this node's clock controller is us */
+#define LPC17XX_CLOCK_IS_CLKC(node) \
+	UTIL_AND( \
+		DT_NODE_HAS_PROP(node, clocks), \
+		DT_SAME_NODE(DT_CLOCKS_CTLR(node), LPC17XX_CLOCK_CONTROL) \
+	)
+
+/* Configures the node's device's peripheral clock to the selected divider */
+#define LPC17XX_CONFIGURE_CLOCK(node) IF_ENABLED(LPC17XX_CLOCK_IS_CLKC(node), \
+	(Chip_Clock_SetPCLKDiv(LPC17XX_PCLK_GET_SELECT(node), LPC17XX_PCLK_GET_DIV(node)); ))
+
+static void lpc17xx_clkc_configure_pclk(void)
+{
+	/* Configure the peripheral clock divider register for every enabled device in the DT */
+	DT_FOREACH_STATUS_OKAY_NODE(LPC17XX_CONFIGURE_CLOCK)
+}
+
 static int lpc17xx_clkc_init(const struct device *dev)
 {
 	const struct lpc17xx_clkc_config *config = dev->config;
 	int ret;
+
+	/* ES_LPC176x Rev 10.6 Section 3.11:
+	 * Peripheral Clock Selection Registers must be set before enabling and connecting PLL0.
+	 * If the Peripheral Clock Registers (PCLKSEL0 and PCLKSEL1) are set or changed after
+	 * PLL0 is enabled and connected, the value written into the Peripheral Clock Selection
+	 * Registers may not take effect. It is not possible to change the Peripheral Clock
+	 * Selection settings once PLL0 is enabled and connected.
+	 */
+	lpc17xx_clkc_configure_pclk();
 
 	/* Enable source clock */
 	ret = clock_control_on(config->src, CLOCK_CONTROL_SUBSYS_ALL);
@@ -280,4 +368,4 @@ const struct lpc17xx_clkc_config clkc_config = {
 DEVICE_DT_DEFINE(LPC17XX_CLOCK_CONTROL, lpc17xx_clkc_init, NULL,
 		 NULL, &clkc_config,
 		 PRE_KERNEL_1, CONFIG_CLOCK_CONTROL_INIT_PRIORITY,
-		 NULL);
+		 &lpc17xx_clkc_api);
